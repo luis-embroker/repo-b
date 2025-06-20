@@ -1,4 +1,4 @@
-name: Test Runner
+name: Multi-Job Workflow
 
 on:
   workflow_call:
@@ -6,25 +6,36 @@ on:
       environment:
         required: true
         type: string
-    outputs:
-      test_summary:
-        description: "Test result summary"
-        value: ${{ jobs.test.outputs.summary }}
+      run_test:
+        required: false
+        type: boolean
+        default: true
+      run_upload:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   test:
+    if: ${{ inputs.run_test }}
     runs-on: ubuntu-latest
     outputs:
       summary: ${{ steps.set-summary.outputs.result }}
     steps:
-      - name: Print environment
-        run: echo "Running tests on environment ${{ inputs.environment }}"
-
-      - name: Run tests (simulate)
-        run: |
-          echo "Running tests..."
-          sleep 2
-
+      - name: Run tests
+        run: echo "Running tests for ${{ inputs.environment }}"
       - name: Set test result summary
         id: set-summary
+        run: echo "result=Tests passed on ${{ inputs.environment }}" >> $GITHUB_OUTPUT
+
+  upload-results:
+    if: ${{ inputs.run_upload }}
+    outputs:
+      upload: ${{ steps.set-upload.outputs.result }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload
+        run: echo "Uploading results for ${{ inputs.environment }}"
+      - name: Set test result upload
+        id: set-upload
         run: echo "result=Tests passed on ${{ inputs.environment }}" >> $GITHUB_OUTPUT
