@@ -18,7 +18,7 @@ jobs:
       summary: ${{ steps.set-summary.outputs.result }}
     steps:
       - name: Print environment
-        run: echo "Running tests on environment: ${{ inputs.environment }}"
+        run: echo "Running tests on environment ${{ inputs.environment }}"
 
       - name: Run tests (simulate)
         run: |
