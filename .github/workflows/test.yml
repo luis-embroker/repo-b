@@ -1,0 +1,30 @@
+name: Test Runner
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    outputs:
+      test_summary:
+        description: "Test result summary"
+        value: ${{ jobs.test.outputs.summary }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      summary: ${{ steps.set-summary.outputs.result }}
+    steps:
+      - name: Print environment
+        run: echo "Running tests on environment: ${{ inputs.environment }}"
+
+      - name: Run tests (simulate)
+        run: |
+          echo "Running tests..."
+          sleep 2
+
+      - name: Set test result summary
+        id: set-summary
+        run: echo "result=Tests passed on ${{ inputs.environment }}" >> $GITHUB_OUTPUT
